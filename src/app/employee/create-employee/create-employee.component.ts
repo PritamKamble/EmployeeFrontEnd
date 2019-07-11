@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../../shared/http.service';
 import { Validators, FormBuilder, FormControl, FormsModule, FormGroup, FormArray, FormArrayName } from '@angular/forms';
 import { Router } from '@angular/router';
-
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-create-employee',
@@ -16,6 +16,8 @@ export class CreateEmployeeComponent implements OnInit {
   employeeForm: FormGroup;
 
   hobbiesError = false;
+
+  techSkillsError = false;
 
   count = 0;
 
@@ -49,25 +51,27 @@ export class CreateEmployeeComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private httpService: HttpService,
-    private router: Router
+    private router: Router,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit() {
 
-
-
     this.employeeForm = this.fb.group({
       firstName: ['test', [Validators.required, Validators.minLength(3)]],
       lastName: ['test', [Validators.required, Validators.minLength(3)]],
-      email: ['test@gmail.com', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]],
+      email: ['test@gmail.com', [Validators.required, Validators.email]],
       gender: ['male', [Validators.required]],
       age: ['44', [Validators.required, Validators.pattern('^(0?[1-9]|[1-9][0-9]|[1][1-9][1-9]|80)$')]],
-      salary: ['44', [Validators.required]],
+      dateOfBirth: new Date(),
+      salary: ['', [Validators.required]],
       address: ['44', [Validators.required]],
-      contact: ['9888888888', [Validators.required, Validators.pattern(/^[789]\d{9}$/)]],
+      contact: ['', [Validators.minLength(10), Validators.required]],
       hobbies: new FormArray([]),
+      techSkills: [],
       state: ['', [Validators.required]],
       city: ['', [Validators.required]],
+      zipCode: ['', [Validators.minLength(6)]],
       employeeImage: ['http://localhost:3000/uploads/default-avatar.png', []]
     });
 
@@ -78,8 +82,6 @@ export class CreateEmployeeComponent implements OnInit {
     });
 
   }
-
-
 
   get firstName() {
     return this.employeeForm.get('firstName');
@@ -101,6 +103,10 @@ export class CreateEmployeeComponent implements OnInit {
     return this.employeeForm.get('age');
   }
 
+  get dateOfBirth() {
+    return this.employeeForm.get('dateOfBirth');
+  }
+
   get salary() {
     return this.employeeForm.get('salary');
   }
@@ -117,12 +123,20 @@ export class CreateEmployeeComponent implements OnInit {
     return this.employeeForm.get('hobbies') as FormArray;
   }
 
+  get techSkills() {
+    return this.employeeForm.get('techSkills');
+  }
+
   get state() {
     return this.employeeForm.get('state');
   }
 
   get city() {
     return this.employeeForm.get('city');
+  }
+
+  get zipCode() {
+    return this.employeeForm.get('zipCode');
   }
 
   get employeeImage() {
@@ -144,6 +158,13 @@ export class CreateEmployeeComponent implements OnInit {
       this.hobbiesError = false;
     }
 
+  }
+
+  onTechSkillsChange(event) {
+    this.techSkillsError = true;
+    if (this.techSkills.value.length > 1 || this.techSkills.value.length === 0) {
+      this.techSkillsError = false;
+    }
   }
 
   onStateChange(stateSelected) {
@@ -185,19 +206,22 @@ export class CreateEmployeeComponent implements OnInit {
     data.append('email', this.email.value);
     data.append('gender', this.gender.value);
     data.append('age', this.age.value);
+    data.append('dateOfBirth', this.dateOfBirth.value);
     data.append('salary', this.salary.value);
     data.append('address', this.address.value);
     data.append('contact', this.contact.value);
     data.append('hobbies', this.hobbies.value);
+    data.append('techSkills', JSON.stringify(this.techSkills.value));
     data.append('state', this.state.value);
     data.append('city', this.city.value);
+    data.append('zipCode', this.zipCode.value);
     if (this.changeProfile) {
       data.append('employeeImage', this.selectedFile, this.selectedFile.name);
     }
 
 
     this.response = this.httpService.sendEmployee(data);
-
+    this.toastr.success('Success', 'Employee Added successfully');
     this.ngOnInit();
 
   }

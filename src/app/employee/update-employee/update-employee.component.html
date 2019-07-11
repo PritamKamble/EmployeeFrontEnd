@@ -9,7 +9,7 @@
               (ngSubmit)="updateEmployee()">
 
 
-              <img class="img-fluid" [src]="employeeImage.value" alt="default profile Pic" >
+              <img class="img-fluid" [src]="employeeImage.value" alt="default profile Pic">
 
               <input type="file" (change)="onFileSelected($event)">
 
@@ -79,7 +79,7 @@
               <div class="form-group">
                 <label>Salary</label>
                 <input type="text" [class.is-invalid]="salary.invalid && salary.touched" formControlName="salary"
-                  class="form-control">
+                  class="form-control" currencyMask  [options]="{ prefix: '&#8377; ', thousands: ',' }">
                 <div *ngIf="salary.invalid && salary.touched">
                   <small class="text-danger">Salary is required</small>
                 </div>
@@ -87,8 +87,8 @@
 
               <div class="form-group">
                 <label>Address</label>
-                <input type="text" [class.is-invalid]="address.invalid && address.touched" formControlName="address"
-                  class="form-control">
+                <textarea [class.is-invalid]="address.invalid && address.touched" class="form-control" name="" rows="3"
+                  formControlName="address"></textarea>
                 <div *ngIf="address.invalid && address.touched">
                   <small class="text-danger">Address is required</small>
                 </div>
@@ -97,10 +97,10 @@
               <div class="form-group">
                 <label>Contact</label>
                 <input type="text" [class.is-invalid]="contact.invalid && contact.touched" formControlName="contact"
-                  class="form-control">
+                  class="form-control" mask="0000000000">
                 <div *ngIf="contact.invalid && contact.touched">
                   <small *ngIf="contact.hasError('required')" class="text-danger">Contact is required</small>
-                  <small *ngIf="contact.hasError('pattern')" class="text-danger">Invalid Mobile Number</small>
+                  <small *ngIf="contact.hasError('minlength')" class="text-danger">Invalid Mobile Number</small>
                 </div>
               </div>
 
@@ -113,8 +113,7 @@
                 </div>
               </div>
 
-              {{employeeForm.value | json}}
-              546
+
               <div class="form-group">
                 <label>State</label>
                 <select formControlName="state" class="form-control" (change)="onStateChange($event.target.value)">
@@ -129,12 +128,31 @@
                 </select>
               </div>
 
+              <div class="form-group">
+                <label>Zip Code</label>
+                <input class="form-control" formControlName="zipCode" type="text" mask="000-000">
+                <div *ngIf="zipCode.invalid">
+                  <small class="text-danger">Invalid Zip Code</small>
+                </div>
+              </div>
 
               <div class="form-group">
+                <label for="dateOfBirth">Date of Birth</label>
+                <input id="dateOfBirth" name="dateOfBirth" formControlName="dateOfBirth" type="text" bsDatepicker
+                  class="form-control" [bsConfig]="{ isAnimated: true }" />
+              </div>
 
+              <div class="form-group">
+                <tag-input formControlName="techSkills" (onRemove)=onTechSkillsChange($event)
+                  (onAdd)=onTechSkillsChange($event) [allowDupes]=false></tag-input>
+                <div *ngIf="techSkillsError">
+                  <small class="text-danger">Minimum 2 Skills required</small>
+                </div>
+              </div>
+
+              <div class="form-group">
                 <button class="btn btn-primary" [disabled]="!employeeForm.valid" type="submit">Submit</button>
                 <button class="btn btn-primary ml-2" type="button" routerLink='../../list'>List</button>
-
               </div>
 
             </form>

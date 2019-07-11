@@ -6,8 +6,7 @@ const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent },
   {
-    path: 'employee',
-    loadChildren: () => import('./employee/employee.module').then(mod => mod.EmployeeModule)
+    path: 'employee', loadChildren: './employee/employee.module#EmployeeModule'
   }
 ];
 

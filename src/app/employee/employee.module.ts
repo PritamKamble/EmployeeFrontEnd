@@ -6,7 +6,12 @@ import { CreateEmployeeComponent } from './create-employee/create-employee.compo
 import { ListEmployeeComponent } from './list-employee/list-employee.component';
 import { UpdateEmployeeComponent } from './update-employee/update-employee.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { TagInputModule } from 'ngx-chips';
+import { AvatarModule } from 'ngx-avatar';
+import {NgxMaskModule} from 'ngx-mask';
+import { CurrencyMaskModule } from 'ngx-currency-mask';
+
 
 @NgModule({
   declarations: [
@@ -18,7 +23,12 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
     CommonModule,
     EmployeeRoutingModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BsDatepickerModule.forRoot(),
+    TagInputModule,
+    AvatarModule,
+    NgxMaskModule.forRoot(),
+    CurrencyMaskModule
   ]
 })
 export class EmployeeModule { }

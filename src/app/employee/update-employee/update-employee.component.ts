@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Validators, FormBuilder, FormControl, FormsModule, FormGroup, FormArray } from '@angular/forms';
 import { HttpService } from '../../shared/http.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-update-employee',
@@ -13,6 +14,7 @@ export class UpdateEmployeeComponent implements OnInit {
   employeeForm: FormGroup;
   data = [];
   hobbiesError = false;
+  techSkillsError = false;
   count = 0;
   id = this.active.snapshot.paramMap.get('id');
   imageChange = false;
@@ -50,7 +52,8 @@ export class UpdateEmployeeComponent implements OnInit {
     private httpService: HttpService,
     private active: ActivatedRoute,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit() {
@@ -60,12 +63,15 @@ export class UpdateEmployeeComponent implements OnInit {
       email: ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]],
       gender: ['male', [Validators.required]],
       age: ['', [Validators.required, Validators.pattern('^(0?[1-9]|[1-9][0-9]|[1][1-9][1-9]|80)$')]],
+      dateOfBirth: new Date(),
       salary: ['', [Validators.required]],
       address: ['', [Validators.required]],
-      contact: ['', [Validators.required, Validators.pattern(/^[789]\d{9}$/)]],
+      contact: ['', [Validators.minLength(10), Validators.required]],
       hobbies: new FormArray([]),
+      techSkills: ['', []],
       state: ['', [Validators.required]],
       city: ['', [Validators.required]],
+      zipCode: ['', [Validators.minLength(6)]],
       employeeImage: ['', []]
     });
 
@@ -87,18 +93,20 @@ export class UpdateEmployeeComponent implements OnInit {
       this.employeeForm.get('email').patchValue(res.emp.email);
       this.employeeForm.get('gender').patchValue(res.emp.gender);
       this.employeeForm.get('age').patchValue(res.emp.age);
+      this.employeeForm.get('dateOfBirth').patchValue(new Date(res.emp.dateOfBirth));
       this.employeeForm.get('salary').patchValue(res.emp.salary);
       this.employeeForm.get('address').patchValue(res.emp.address);
       this.employeeForm.get('contact').patchValue(res.emp.contact);
       this.employeeForm.get('city').patchValue(res.emp.city);
+      this.employeeForm.get('zipCode').patchValue(res.emp.zipCode);
+      this.employeeForm.get('techSkills').patchValue(JSON.parse(res.emp.techSkills));
 
-
-      this.employeeImage.patchValue("http://localhost:3000/" + res.emp.employeeImage);
+      this.employeeImage.patchValue('http://localhost:3000/' + res.emp.employeeImage);
 
 
       for (let i = 0; i < this.hobbiesArr.length; i++) {
         this.employeeForm.controls.hobbies.get(i.toString()).patchValue(hobbiesarr[i] === 'true' ? true : false);
-        if (hobbiesarr[i] === "true") {
+        if (hobbiesarr[i] === 'true') {
           this.count++;
         }
       }
@@ -127,6 +135,10 @@ export class UpdateEmployeeComponent implements OnInit {
     return this.employeeForm.get('age');
   }
 
+  get dateOfBirth() {
+    return this.employeeForm.get('dateOfBirth');
+  }
+
   get salary() {
     return this.employeeForm.get('salary');
   }
@@ -143,12 +155,20 @@ export class UpdateEmployeeComponent implements OnInit {
     return this.employeeForm.get('hobbies') as FormArray;
   }
 
+  get techSkills() {
+    return this.employeeForm.get('techSkills');
+  }
+
   get state() {
     return this.employeeForm.get('state');
   }
 
   get city() {
     return this.employeeForm.get('city');
+  }
+
+  get zipCode() {
+    return this.employeeForm.get('zipCode');
   }
 
   get employeeImage() {
@@ -172,6 +192,13 @@ export class UpdateEmployeeComponent implements OnInit {
 
   }
 
+  onTechSkillsChange(event) {
+    this.techSkillsError = true;
+    if (this.techSkills.value.length > 1) {
+      this.techSkillsError = false;
+    }
+  }
+
   onStateChange(stateSelected) {
     this.cities = this.statesCities.find(state => state.name === stateSelected).cities;
     this.employeeForm.get('state').setValue(stateSelected);
@@ -193,19 +220,23 @@ export class UpdateEmployeeComponent implements OnInit {
     data.append('email', this.email.value);
     data.append('gender', this.gender.value);
     data.append('age', this.age.value);
+    data.append('dateOfBirth', this.dateOfBirth.value);
     data.append('salary', this.salary.value);
     data.append('address', this.address.value);
     data.append('contact', this.contact.value);
     data.append('hobbies', this.hobbies.value);
+    data.append('techSkills', JSON.stringify(this.techSkills.value));
     data.append('state', this.state.value);
     data.append('city', this.city.value);
+    data.append('zipCode', this.zipCode.value);
 
     if (this.imageChange) {
       data.append('employeeImage', this.selectedFile, this.selectedFile.name);
     }
 
     this.httpService.updateData(data, this.id).subscribe(res => {
-      this.router.navigate(['../list'], { relativeTo: this.route });
+      this.router.navigate(['../../list'], { relativeTo: this.route });
+      this.toastr.success('Success', 'Employee Added successfully');
     });
   }
 
