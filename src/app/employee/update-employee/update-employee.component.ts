@@ -61,16 +61,16 @@ export class UpdateEmployeeComponent implements OnInit {
       firstName: ['', [Validators.required, Validators.minLength(3)]],
       lastName: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]],
-      gender: ['male', [Validators.required]],
-      age: ['', [Validators.required, Validators.pattern('^(0?[1-9]|[1-9][0-9]|[1][1-9][1-9]|80)$')]],
+      gender: ['male'],
+      age: ['', [Validators.pattern('^(0?[1-9]|[1-9][0-9]|[1][1-9][1-9]|80)$')]],
       dateOfBirth: new Date(),
-      salary: ['', [Validators.required]],
-      address: ['', [Validators.required]],
-      contact: ['', [Validators.minLength(10), Validators.required]],
+      salary: [''],
+      address: [''],
+      contact: ['', [Validators.minLength(10)]],
       hobbies: new FormArray([]),
       techSkills: ['', []],
-      state: ['', [Validators.required]],
-      city: ['', [Validators.required]],
+      state: [''],
+      city: [''],
       zipCode: ['', [Validators.minLength(6)]],
       employeeImage: ['', []]
     });
@@ -86,20 +86,25 @@ export class UpdateEmployeeComponent implements OnInit {
 
       const hobbiesarr = res.emp.hobbies.split(',');
 
-      this.onStateChange(res.emp.state);
+      if (res.emp.state) {
+        this.onStateChange(res.emp.state);
+        this.employeeForm.get('city').setValue(res.emp.city);
+      } else {
+        this.employeeForm.get('state').setValue('');
+        this.employeeForm.get('city').setValue('');
+      }
 
       this.employeeForm.get('firstName').patchValue(res.emp.firstName);
       this.employeeForm.get('lastName').patchValue(res.emp.lastName);
       this.employeeForm.get('email').patchValue(res.emp.email);
       this.employeeForm.get('gender').patchValue(res.emp.gender);
       this.employeeForm.get('age').patchValue(res.emp.age);
-      this.employeeForm.get('dateOfBirth').patchValue(new Date(res.emp.dateOfBirth));
+      this.employeeForm.get('dateOfBirth').patchValue(res.emp.dateOfBirth ? new Date(res.emp.dateOfBirth) : '');
       this.employeeForm.get('salary').patchValue(res.emp.salary);
       this.employeeForm.get('address').patchValue(res.emp.address);
       this.employeeForm.get('contact').patchValue(res.emp.contact);
-      this.employeeForm.get('city').patchValue(res.emp.city);
       this.employeeForm.get('zipCode').patchValue(res.emp.zipCode);
-      this.employeeForm.get('techSkills').patchValue(JSON.parse(res.emp.techSkills));
+      this.employeeForm.get('techSkills').patchValue((res.emp.techSkills ? JSON.parse(res.emp.techSkills) : ''));
 
       this.employeeImage.patchValue('http://localhost:3000/' + res.emp.employeeImage);
 

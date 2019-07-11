@@ -113,17 +113,18 @@
                 </div>
               </div>
 
-
+              {{employeeForm.value | json}}
               <div class="form-group">
-                <label>State</label>
-                <select formControlName="state" class="form-control" (change)="onStateChange($event.target.value)">
-                  <option value="{{state}}" selected disabled hidden>--Select State--</option>
-                  <option *ngFor="let state of statesCities"> {{state.name}}</option>
-                </select>
+                  <label>State</label>
+                  <select formControlName="state" class="form-control" (change)="onStateChange($event.target.value)">
+                    <option value="{{state}}" selected disabled hidden>--Select State--</option>
+                    <option *ngIf="state.value==''" value="" selected disabled hidden>--Select State--</option>
+                    <option *ngFor="let state of statesCities"> {{state.name}}</option>
+                  </select>
 
                 <label>City</label>
                 <select formControlName="city" class="form-control">
-                  <option value="" selected disabled hidden>--Select City--</option>
+                  <option value="{{city}}" selected disabled hidden>--Select City--</option>
                   <option value={{city}} *ngFor="let city of cities"> {{city}}</option>
                 </select>
               </div>
