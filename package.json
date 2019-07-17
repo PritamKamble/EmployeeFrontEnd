@@ -20,6 +20,8 @@
     "@angular/platform-browser-dynamic": "~8.0.1",
     "@angular/router": "~8.0.1",
     "bootstrap": "^4.3.1",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.4.1",
     "ng-toast": "^2.0.0",
     "ngx-avatar": "^3.7.0",
     "ngx-bootstrap": "^5.0.0",
@@ -30,6 +32,7 @@
     "rxjs": "~6.4.0",
     "sweetalert": "^2.1.2",
     "sweetalert2": "^8.13.4",
+    "themify-icons": "^1.0.0",
     "tslib": "^1.9.0",
     "zone.js": "~0.9.1"
   },

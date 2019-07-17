@@ -12,13 +12,9 @@ import { ToastrService } from 'ngx-toastr';
 export class CreateEmployeeComponent implements OnInit {
 
   response;
-
   employeeForm: FormGroup;
-
   hobbiesError = false;
-
   techSkillsError = false;
-
   count = 0;
 
   hobbiesArr = [{ id: 0, name: 'reading', value: 'false' },

@@ -64,4 +64,8 @@ export class DashboardComponent implements OnInit {
 
   }
 
+  logout() {
+    localStorage.clear();
+  }
+
 }

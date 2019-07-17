@@ -40,7 +40,6 @@ export class ListEmployeeComponent implements OnInit {
   }
 
   updateEmployee(id) {
-
     this.router.navigate(['../update/' + id], { relativeTo: this.route });
   }
 
@@ -65,4 +64,10 @@ export class ListEmployeeComponent implements OnInit {
         }
       });
   }
+
+  logout() {
+    localStorage.clear();
+    console.log('logged out');
+  }
+
 }
