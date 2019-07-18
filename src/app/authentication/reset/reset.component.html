@@ -1,1 +1,30 @@
-<p>reset works!</p>
+<div class="container-fluid" style="background-color: rgb(41, 43, 46)">
+  <div class="row">
+    <div class="col-sm-12 col-md-7 col-lg-5 mx-auto">
+      <div class="card card-signin my-5">
+        <div class="card-body">
+          <h5 class="card-title text-center">Change Password</h5>
+          <form class="form-signin" [formGroup]="passForm" (ngSubmit)="changePass()">
+
+
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" formControlName="pass" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label>Confirm Password</label>
+              <input type="password" class="form-control">
+            </div>
+
+
+
+            <button class="btn btn-lg btn-success btn-block text-uppercase" type="submit">Change Password</button>
+
+            <hr class="my-4">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

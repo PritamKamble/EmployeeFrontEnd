@@ -48,6 +48,14 @@ export class HttpService {
     return this.http.post<any>(this.authUrl + 'login', data);
   }
 
+  reset(data) {
+    return this.http.post<any>(this.authUrl + 'reset', data);
+  }
+
+  changePass(data, id) {
+    return this.http.post<any>(this.authUrl + 'reset/' + id, data);
+  }
+
   loggedIn() {
     return !!localStorage.getItem('token');
   }

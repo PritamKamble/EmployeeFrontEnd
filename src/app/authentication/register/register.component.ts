@@ -17,7 +17,7 @@ export class RegisterComponent implements OnInit {
     private fb: FormBuilder,
     private httpService: HttpService,
     private router: Router,
-    private route: ActivatedRoute,
+    private active: ActivatedRoute,
     private toastr: ToastrService
   ) { }
 
@@ -43,9 +43,9 @@ export class RegisterComponent implements OnInit {
     data.append('email', this.email.value);
     data.append('pass', this.pass.value);
 
-    this.httpService.registerUser(data).subscribe(response => {
-      // this.router.navigate(['../../employee'], { relativeTo: this.route });
-      console.log(response);
+    this.httpService.registerUser(data).subscribe(res => {
+      localStorage.setItem('token', res.token);
+      this.router.navigate(['../../employee'], { relativeTo: this.active });
       this.toastr.success('Success', 'Registration successful');
     },
       err => {
@@ -63,7 +63,7 @@ export class RegisterComponent implements OnInit {
     data.append('pass', this.pass.value);
 
     this.httpService.loginUser(data).subscribe(res => {
-      // this.router.navigate(['../../employee'], { relativeTo: this.route });
+      this.router.navigate(['../../employee'], { relativeTo: this.active });
       this.toastr.success('Success', 'Login successfully');
     },
       err => {
