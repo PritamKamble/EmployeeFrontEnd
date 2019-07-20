@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRoute } from '@angular/router';
-import { HttpService } from './shared/http.service'
+import { HttpService } from './shared/http.service';
 
 @Injectable({
   providedIn: 'root'

@@ -22,6 +22,11 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
+    if (this.httpService.loggedIn) {
+      this.router.navigate(['../../employee'], { relativeTo: this.route });
+    }
+
     this.loginForm = this.fb.group({
       email: ['', [Validators.required]],
       pass: ['', [Validators.required]]
@@ -43,8 +48,6 @@ export class LoginComponent implements OnInit {
     data.append('pass', this.pass.value);
 
     this.httpService.loginUser(data).subscribe(res => {
-      console.log(res.token);
-
       localStorage.setItem('token', res.token);
       this.router.navigate(['../../dashboard'], { relativeTo: this.route });
       this.toastr.success('Success', 'Login successfully');

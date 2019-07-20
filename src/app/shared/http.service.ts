@@ -24,7 +24,6 @@ export class HttpService {
   }
 
   getData() {
-    console.log(this.httpOptions);
     return this.http.get<any>(this.empUrl, this.httpOptions);
   }
 

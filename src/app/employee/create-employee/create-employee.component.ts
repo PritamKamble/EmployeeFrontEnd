@@ -3,6 +3,7 @@ import { HttpService } from '../../shared/http.service';
 import { Validators, FormBuilder, FormControl, FormsModule, FormGroup, FormArray, FormArrayName } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { emailValidator, nameValidator, ageValidator, contactValidator, skillsValidator } from '../../validators';
 
 @Component({
   selector: 'app-create-employee',
@@ -13,9 +14,9 @@ export class CreateEmployeeComponent implements OnInit {
 
   response;
   employeeForm: FormGroup;
-  hobbiesError = false;
-  techSkillsError = false;
   count = 0;
+  selectedFile: File = null;
+  changeProfile = false;
 
   hobbiesArr = [{ id: 0, name: 'reading', value: 'false' },
   { id: 1, name: 'cooking', value: 'false' },
@@ -54,29 +55,27 @@ export class CreateEmployeeComponent implements OnInit {
   ngOnInit() {
 
     this.employeeForm = this.fb.group({
-      firstName: ['test', [Validators.required, Validators.minLength(3)]],
-      lastName: ['test', [Validators.required, Validators.minLength(3)]],
-      email: ['test@gmail.com', [Validators.required, Validators.email]],
+      firstName: ['test', nameValidator],
+      lastName: ['test', nameValidator],
+      email: ['test@gmail.com', emailValidator],
       gender: ['male', [Validators.required]],
-      age: ['44', [Validators.required, Validators.pattern('^(0?[1-9]|[1-9][0-9]|[1][1-9][1-9]|80)$')]],
+      age: ['44', ageValidator],
       dateOfBirth: new Date(),
       salary: ['', [Validators.required]],
       address: ['44', [Validators.required]],
-      contact: ['', [Validators.minLength(10), Validators.required]],
+      contact: ['', contactValidator],
       hobbies: new FormArray([]),
-      techSkills: [],
+      techSkills: ['', skillsValidator],
       state: ['', [Validators.required]],
       city: ['', [Validators.required]],
       zipCode: ['', [Validators.minLength(6)]],
-      employeeImage: ['http://localhost:3000/uploads/default-avatar.png', []]
+      employeeImage: 'http://localhost:3000/uploads/default-avatar.png'
     });
 
     this.hobbiesArr.map((o, i) => {
       const control = new FormControl(false);
       (this.employeeForm.controls.hobbies as FormArray).push(control);
-
     });
-
   }
 
   get firstName() {
@@ -116,7 +115,7 @@ export class CreateEmployeeComponent implements OnInit {
   }
 
   get hobbies() {
-    return this.employeeForm.get('hobbies') as FormArray;
+    return this.employeeForm.get('hobbies');
   }
 
   get techSkills() {
@@ -140,26 +139,17 @@ export class CreateEmployeeComponent implements OnInit {
   }
 
   onCheckBoxClick(event) {
-
-    this.hobbiesError = true;
-
-
     if (event.target.checked) {
       this.count++;
     } else {
       this.count--;
     }
-
-    if (this.count > 1) {
-      this.hobbiesError = false;
-    }
-
-  }
-
-  onTechSkillsChange(event) {
-    this.techSkillsError = true;
-    if (this.techSkills.value.length > 1 || this.techSkills.value.length === 0) {
-      this.techSkillsError = false;
+    if (this.count > 1 || this.count === 0) {
+      this.hobbies.clearValidators();
+      this.hobbies.updateValueAndValidity();
+    } else {
+      this.hobbies.setValidators(Validators.requiredTrue);
+      this.hobbies.updateValueAndValidity();
     }
   }
 
@@ -169,26 +159,20 @@ export class CreateEmployeeComponent implements OnInit {
     this.employeeForm.get('city').setValue('');
   }
 
-  selectedFile: File = null;
-
-  changeProfile = false;
   onFileSelected(event) {
 
     if (event.target.files && event.target.files[0]) {
       this.changeProfile = true;
-      var reader = new FileReader();
-
+      const reader = new FileReader();
       reader.readAsDataURL(event.target.files[0]);
-
       reader.onload = (event) => {
         this.employeeImage.setValue(reader.result);
       };
     }
-    this.selectedFile = <File>event.target.files[0];
+    this.selectedFile = event.target.files[0] as File;
   }
 
   sendEmployee() {
-
     const hobbiesArr2 = this.hobbiesArr;
 
     for (let i = 0; i < hobbiesArr2.length; i++) {
@@ -196,7 +180,6 @@ export class CreateEmployeeComponent implements OnInit {
     }
 
     const data = new FormData();
-
     data.append('firstName', this.firstName.value);
     data.append('lastName', this.lastName.value);
     data.append('email', this.email.value);

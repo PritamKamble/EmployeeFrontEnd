@@ -8,13 +8,13 @@
             <form class="form-signin" [formGroup]="loginForm" (ngSubmit)="loginUser()">
               <div class="form-group">
                 <label>Email address</label>
-                <input type="text" id="inputEmail" formControlName="email" class="form-control"
+                <input type="text" formControlName="email" class="form-control"
                   placeholder="Email address" required autofocus>
               </div>
 
               <div class="form-group">
                 <label>Password</label>
-                <input type="text" id="inputPassword" formControlName="pass" class="form-control" placeholder="Password"
+                <input type="password" formControlName="pass" class="form-control" placeholder="Password"
                   required>
               </div>
 

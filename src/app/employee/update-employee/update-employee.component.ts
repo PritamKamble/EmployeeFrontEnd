@@ -3,6 +3,7 @@ import { Validators, FormBuilder, FormControl, FormsModule, FormGroup, FormArray
 import { HttpService } from '../../shared/http.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { ageValidator, contactValidator, emailValidator, nameValidator, skillsValidator } from '../../validators';
 
 @Component({
   selector: 'app-update-employee',
@@ -13,8 +14,6 @@ export class UpdateEmployeeComponent implements OnInit {
 
   employeeForm: FormGroup;
   data = [];
-  hobbiesError = false;
-  techSkillsError = false;
   count = 0;
   id = this.active.snapshot.paramMap.get('id');
   imageChange = false;
@@ -58,17 +57,17 @@ export class UpdateEmployeeComponent implements OnInit {
 
   ngOnInit() {
     this.employeeForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.minLength(3)]],
-      lastName: ['', [Validators.required, Validators.minLength(3)]],
-      email: ['', [Validators.required, Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$')]],
+      firstName: ['', nameValidator],
+      lastName: ['', nameValidator],
+      email: ['', emailValidator],
       gender: ['male'],
-      age: ['', [Validators.pattern('^(0?[1-9]|[1-9][0-9]|[1][1-9][1-9]|80)$')]],
+      age: ['', ageValidator],
       dateOfBirth: new Date(),
       salary: [''],
       address: [''],
-      contact: ['', [Validators.minLength(10)]],
+      contact: ['', contactValidator],
       hobbies: new FormArray([]),
-      techSkills: ['', []],
+      techSkills: ['', skillsValidator],
       state: [''],
       city: [''],
       zipCode: ['', [Validators.minLength(6)]],
@@ -157,7 +156,7 @@ export class UpdateEmployeeComponent implements OnInit {
   }
 
   get hobbies() {
-    return this.employeeForm.get('hobbies') as FormArray;
+    return this.employeeForm.get('hobbies');
   }
 
   get techSkills() {
@@ -181,27 +180,20 @@ export class UpdateEmployeeComponent implements OnInit {
   }
 
   onCheckBoxClick(event) {
-
-    this.hobbiesError = true;
-
-
     if (event.target.checked) {
       this.count++;
     } else {
       this.count--;
     }
 
-    if (this.count > 1) {
-      this.hobbiesError = false;
+    if (this.count > 1 || this.count === 0) {
+      this.hobbies.clearValidators();
+      this.hobbies.updateValueAndValidity();
+    } else {
+      this.hobbies.setValidators(Validators.requiredTrue);
+      this.hobbies.updateValueAndValidity();
     }
 
-  }
-
-  onTechSkillsChange(event) {
-    this.techSkillsError = true;
-    if (this.techSkills.value.length > 1) {
-      this.techSkillsError = false;
-    }
   }
 
   onStateChange(stateSelected) {
